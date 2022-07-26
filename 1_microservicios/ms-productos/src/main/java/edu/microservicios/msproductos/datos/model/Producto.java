@@ -1,4 +1,4 @@
-package edu.microservicios.msproductos.data.model;
+package edu.microservicios.msproductos.datos.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

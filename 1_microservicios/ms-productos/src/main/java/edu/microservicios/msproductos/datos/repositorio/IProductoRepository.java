@@ -1,6 +1,6 @@
-package edu.microservicios.msproductos.data.repository;
+package edu.microservicios.msproductos.datos.repositorio;
 
-import edu.microservicios.msproductos.data.model.Producto;
+import edu.microservicios.msproductos.datos.model.Producto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  * @version 1.0
  */
 @Repository
-public interface ProductoRepository extends JpaRepository<Producto, Long> {
+public interface IProductoRepository extends JpaRepository<Producto, Long> {
 }
