@@ -1,4 +1,4 @@
-package edu.microservicios.msproductos.negocio.servicio.interfaz;
+package edu.microservicios.msproductos.datos.fachada.interfaz;
 
 import edu.microservicios.msproductos.comun.dto.ProductoDto;
 import edu.microservicios.msproductos.datos.model.Producto;
@@ -6,11 +6,11 @@ import edu.microservicios.msproductos.datos.model.Producto;
 import java.util.List;
 
 /**
- * Interface que representa el servicio de producto, es decir donde estara la logica de negocio relaiconado a producto
+ * Interface que emplea el patron fachada para dar disponibilizar todas las funcionalidades correspondiente pero devolviendo un objeto DTO
  * @author dtrujilloc
  * @version 1.0
  */
-public interface IProductoService {
+public interface IProductoFacade {
 
     /**
      * Permite obtener todos los registros de la tabla Producto
@@ -22,6 +22,7 @@ public interface IProductoService {
      * Permite obtener un registro correspondiente al identificador especificado en el parametro
      * @param id Long que representa el identificador del producto que se quiere buscar
      * @return un objeto Producto en caso tal que exista, o null en caso contrario.
+     *
      */
     ProductoDto obtenerPorId(Long id);
 }
