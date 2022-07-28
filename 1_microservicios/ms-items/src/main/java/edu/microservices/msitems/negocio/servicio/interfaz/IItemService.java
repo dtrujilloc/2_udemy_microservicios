@@ -5,7 +5,7 @@ import edu.microservices.msitems.comun.dto.ItemDto;
 import java.util.List;
 
 /**
- * Interface que representa el servicio de producto, es decir donde estara la logica de negocio relaiconado a producto
+ * Interface que representa el servicio de Item, es decir donde estara la logica de negocio relaiconado a item
  * @author dtrujilloc
  * @version 1.0
  */
