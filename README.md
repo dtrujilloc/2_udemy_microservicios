@@ -32,3 +32,10 @@ Es necesario tambien agregar la dependencia acorde para la utilizacion de feign.
 En el proyecto de ms-items se pueden apreciar la implementacion de los dos clientes http.
 - Por el lado de RestTemplate, se configuro en la clase RestTemplateConfig, y se utilizo en el servicio ProductoRestTemplateServiceImpl.
 - Por el lado de Feign, la interface encargada de la conexion http, es la interface ProductoFeignClient, y donde se utiliza es en el servicio ProductoFeignServiceImpl.
+
+### 1.2 Balanceador de Carga - Ribbon
+Cuando se trabaja con microservicios, es posible tener mas de una instancia de un mismo microservicio. Una instancia de un MS es tener el proyecto en ejecucion, entonces cuando se habla de mas instancias, es como tener varias veces el proyecto ejecutandose por puertos diferentes, esto permite que cuando existan muchas peticiones o solicitudes al MS, pues este tenga los recursos suficientes (instancias) como para suplir todas la solicitudes. Perooo... como saber como distribuir o repartir las solicitudes entre las diferentes instancias? Pues esto es el trabajo del balanceador de carga. El load balancer (balanceador de carga) se encarga de saber a cual instancia enviar la solicitud dependiend de como se encuentren en el momento de la solicitud, esto permite el balanceo correcto y acorde y evitar la saturacion de las intancias de los MS.
+
+Para este caso utilizamos Ribbon, el cual es un balanceador de carga. Para esta practica modificamos la version de spring boot(2.3.12) y spring cloud(Hoxton.SR12) en nuesto ms-item, ya que ribbon no esta disponible desde la version 2.4.X. Este balanceador de carga (ribbon) se utiliza sin la necesidad de utiliar Eureka.
+
+En eta practica implementamos Ribbon tanto para cliente http de feign como para RestTemplate. Estos cambios solo quedaran en la rama especifricada y no los llevaremos a la rama master ya que es una propuesta de como utilizar un balanceador de carga sin Eureka, y no se utilizara en el desarrollo del proyecto.

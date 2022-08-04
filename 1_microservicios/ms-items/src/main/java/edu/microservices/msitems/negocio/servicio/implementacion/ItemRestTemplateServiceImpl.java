@@ -19,6 +19,12 @@ import java.util.stream.Collectors;
  * con el otro microservicio es por medio del cliente http de RestTemplate.
  * @author dtrujilloc
  * @version 1.0
+ * ____________________________________________________________________________________________________________________________
+ * Para permitir que el balanceo de carga se pueda dar con RestTemplate, se debe modificar la url del restTemplate. Anteriomente
+ * se ponia la url completa junto con el puerto, Ahora se especifica es el nombre del microservicio como se especifico en el
+ * properties para el balanceador de carga de ribbon
+ * @author dtrujilloc
+ * @version 1.1
  */
 @Slf4j
 @Service("itemRestTemplateService")
@@ -35,7 +41,8 @@ public class ItemRestTemplateServiceImpl implements IItemService {
         log.info(">>> Start method obtenerTodos con RestTemplate");
 
         log.info("---> Start conexion con ms-productos por medio de RestTemplate como cliente http");
-        ProductoDto[] productoDtoArreglo = restTemplateClient.getForObject("http://localhost:8081/productos", ProductoDto[].class);
+//        ProductoDto[] productoDtoArreglo = restTemplateClient.getForObject("http://localhost:8081/productos", ProductoDto[].class);   // version 1.0
+        ProductoDto[] productoDtoArreglo = restTemplateClient.getForObject("http://ms-producto/productos", ProductoDto[].class);    // version 1.1
         log.info("<--- end conexion con ms-productos por medio de RestTemplate como cliente http");
 
         List<ProductoDto> productoDtoList = Arrays.asList(productoDtoArreglo);
@@ -51,7 +58,8 @@ public class ItemRestTemplateServiceImpl implements IItemService {
         log.info("---> Start conexion con ms-productos por medio de RestTemplate como cliente http");
         Map<String, String> pathVariables = new HashMap<>();
         pathVariables.put("id", id.toString());
-        ProductoDto productoDto = restTemplateClient.getForObject("http://localhost:8081/productos/{id}", ProductoDto.class, pathVariables);
+//        ProductoDto productoDto = restTemplateClient.getForObject("http://localhost:8081/productos/{id}", ProductoDto.class, pathVariables);  // version 1.0
+        ProductoDto productoDto = restTemplateClient.getForObject("http://ms-producto/productos/{id}", ProductoDto.class, pathVariables);   // version 1.1
         log.info("<--- end conexion con ms-productos por medio de RestTemplate como cliente http");
 
         ItemDto itemDto = new ItemDto(productoDto, cantidad);

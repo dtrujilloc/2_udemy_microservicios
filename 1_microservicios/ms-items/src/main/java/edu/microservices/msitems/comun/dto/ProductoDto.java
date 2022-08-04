@@ -16,4 +16,5 @@ public class ProductoDto {
     private String nombre;
     private Double precio;
     private Date fechaCreacion;
+    private Integer puerto;
 }
