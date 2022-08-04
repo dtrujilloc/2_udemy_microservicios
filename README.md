@@ -39,3 +39,41 @@ Cuando se trabaja con microservicios, es posible tener mas de una instancia de u
 Para este caso utilizamos Ribbon, el cual es un balanceador de carga. Para esta practica modificamos la version de spring boot(2.3.12) y spring cloud(Hoxton.SR12) en nuesto ms-item, ya que ribbon no esta disponible desde la version 2.4.X. Este balanceador de carga (ribbon) se utiliza sin la necesidad de utiliar Eureka.
 
 En eta practica implementamos Ribbon tanto para cliente http de feign como para RestTemplate. Estos cambios solo quedaran en la rama especifricada y no los llevaremos a la rama master ya que es una propuesta de como utilizar un balanceador de carga sin Eureka, y no se utilizara en el desarrollo del proyecto.
+
+## 1 Eureka
+En una arquitectura de microservicios, es normal llegar a un punto o momento donde tengamos muchos microservicios activos junto con las multiples instancias que puede tener cada uno. Ahora pensando en ese contexto, seria muy tedioso estar revisando cada uno de los MS's si esta funcionando correctamente o no. Debido a esta situacion, Netflix, creo un servidor que se encarga de centralizar el registro de los MS's y permitir la visualizacion del estado de cada uno de los MS's.
+
+Eureka, es una herramienta que permite registra y localizar los MS's. Funciona creando un proyecto de spring boot basico, y con tan solo agregarle la dependencia y etiquetarlo como servidor de eureka, ya esta listo para ser utilizado.
+
+La dependencia para configurar un proyecto como servidor es la siguientes:
+
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+	</dependency>
+
+Desde Java 9 en adelante, es necesario agregar otra dependencia cuando se trabaja con Eureka. la cual es:
+
+	<dependency>
+		<groupId>org.glassfish.jaxb</groupId>
+		<artifactId>jaxb-runtime</artifactId>
+	</dependency>
+
+Y para finalizar la configuracion del servidor de Eureka, es necesario agregar la etiqueta de @EnableEurekaServer en la clase principal del proyecto. Si no modificamos el puerto del proyecto, por defecto, Eureka se despliega en el puerto 8761. Pero si modificamos el puerto del proyecto, pues Eureka tomara dicho puerto para desplegarse. Podemos visualizar el dashboard que ofrece eureka accediendo a la url correspondiente: 
+
+	http://localhost:{puerto_eureka_server}
+	
+Por otro lado, se tiene la configuracion de los MS's como clientes de Eureka para que una vez se ejecuten los proyectos, se registren automaticamente en el Servidor. Para esto es indispensable en cada que en cada uno de los MS's se agregue la dependencia correspondiente como cliente de Eureka:
+
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+	</dependency>
+	
+El siguiente paso es etiquetar el proyecto como un cliente de Eureka, y esto se hace en la clase principal del poyecto con la etiqueta @EnableEurekaClient.
+
+Por ultimo, falta especificar la ruta del servidor de Eureka, para  que el MS sepa donde tiene que apuntar para registrarse como cliente. Para esto se agrega la siguiente propiedad en archivo de properties (en nuestro caso, nosotros tenemos el servidor eureka expuesto por el puerto 8080).
+
+	eureka.client.service-url.defaultZone=http://localhost:8080/eureka
+
+Este tipo de configuraciones permite que cuando un MS se registre en el servidor de Eureka conozca todos los MS que estan registrados, esto con el proposito de que cada uno de los MS's tenga conocimiento de los demas MS's.
