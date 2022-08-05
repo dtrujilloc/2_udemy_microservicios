@@ -40,7 +40,7 @@ Para este caso utilizamos Ribbon, el cual es un balanceador de carga. Para esta 
 
 En eta practica implementamos Ribbon tanto para cliente http de feign como para RestTemplate. Estos cambios solo quedaran en la rama especifricada y no los llevaremos a la rama master ya que es una propuesta de como utilizar un balanceador de carga sin Eureka, y no se utilizara en el desarrollo del proyecto.
 
-## 1 Eureka
+## 2 Eureka
 En una arquitectura de microservicios, es normal llegar a un punto o momento donde tengamos muchos microservicios activos junto con las multiples instancias que puede tener cada uno. Ahora pensando en ese contexto, seria muy tedioso estar revisando cada uno de los MS's si esta funcionando correctamente o no. Debido a esta situacion, Netflix, creo un servidor que se encarga de centralizar el registro de los MS's y permitir la visualizacion del estado de cada uno de los MS's.
 
 Eureka, es una herramienta que permite registra y localizar los MS's. Funciona creando un proyecto de spring boot basico, y con tan solo agregarle la dependencia y etiquetarlo como servidor de eureka, ya esta listo para ser utilizado.
