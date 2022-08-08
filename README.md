@@ -97,3 +97,17 @@ Por otro lado, es importante etiquetar el proyecto para habilitar el patron de C
 Para programar una respuesta falsa sobre el proceso o funcionalidad que falle, es necesario etiquetar el metodo que puede fallar con la etiqueta @HystrixCommand(fallbackMethod = "{nombre_del_metodo_falso}") para indicar que metodo tiene que llamarse cuando el metodo principal falle. Por ejemplo, en nuestro caso, en el ms-items, existe un endpoint que permite consultar un item, los parametros son el idProducto y cantidad. Se busca el producto en el ms-producto por medio del idProducto y se utiliza la informacion de este para construir el objeto de item teniendo en cuenta la cantidad enviada por parametro. Lo que hicimos fue que cuando se enviara un identificador de un producto que no existiera en la BD, el ms-producto respondiera con una excepcion, simulando un error. por medio de hystrix, se programo un flujo falso, para cuando este escenario de error se presentara, lo que se hizo fue programar un metodo que contruyera un objeto de item temporal o momentaneo y que esa fuera la respuesta a la peticion.
 
 Hystrix fue creado inicialmente como herramienta de tolerancia a fallos, por lo que actualmente funciona para la version de spring boot 2.3.X hacia atras. desde la version 2.4.X en adelante se utiliza Resilience4j como herramienta de tolerancia a fallos. Por esta razon no vamos a combinar los cambios de la rama de Hystrix en la rama master.
+
+### 3.1 Hystrix y Ribbon - Timeout
+En las conexiones entre MS's, lo ideal seria que el tiempo de conexion y respuesta fuera inmediato entre MS's. Pero este tiempo de conexion puede depender de multiples factores externos como la cantidad de informacion que se solicite, la latencia segun el tipo y medio de conexion, velocidad de interner, etc. Tanto ribbon como hystrix tienen un tiempo de espera maximo de 1 segundo. Es decir, si la repuesta de la peticion realizada no se efectura en 1 segundo, estos se encargan de cortar la conexion y retornar un error de tiempo de espera maximo excedido. Por lo cual es importante poder modificar estos tiempos de espera maximos para permitir tiempos mas acordes segun las perticiones y asi evitar falsos errores.
+
+Como bien especificamos anteriormente, tenemos dos MS, ms-items y ms-productos, donde el ms-items llama al ms-productos para obtener la informacion, lo que hicimos fue que en el ms-productos declaramos un tiempo de espera de 3000ms (3s) del hilo principal, lo cual, con los valores por defecto de hystrix y ribbon se generaba un error de tiempo de espera. Lo que hicimos fue modifcar estos tiempos de espera en el archivo de propiedades del ms-items. Tener en cuenta que dentro de la arquitectura, Hystrix encapsula a ribbon por lo que el tiempo de espera de Hystrix debe ser mayor que el tiempo de espera que utiliza ribbon. para poder configurar esto se necesitan las siguiente propiedades para ribbon. Estas se configuran el tiempo maximo de conexion y el tiempo maximo de lectura.
+
+	ribbon.ConnectTimeout:4000
+	ribbon.ReadTimeout:10000
+
+para hystrix, necesitamos la siguiente propiedad.
+
+	hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds:15000
+
+Como vemos los tiempos de ribbon suman 14000 ms, por lo cual el tiempo de hyxtrix debe ser mayor a esto.
