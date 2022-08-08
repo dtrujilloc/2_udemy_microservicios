@@ -44,10 +44,11 @@ public class ProductoServiceImpl implements IProductoService {
         log.info(">>> Start method obtenerPorId -> productId:{}", id);
         ProductoDto productoDto = productoFacade.obtenerPorId(id);
 
-        try {
-            Thread.sleep(3000L);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        if (Objects.isNull(productoDto)) {
+            throw new RuntimeException("Error lanzado para ejecutar/activar fallback en el ms-items");
+        }
+        else {
+            productoDto.setPuerto(puerto);
         }
 
         log.info("<<< End method obtenerPorId -> producto:{}", productoDto);
