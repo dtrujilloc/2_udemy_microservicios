@@ -23,5 +23,5 @@ public interface IItemService {
      * @param cantidad Integer que representa la cantidad del producto
      * @return un objeto Item en caso tal que exista el producto, o null en caso contrario.
      */
-    ItemDto obtenerItemPorIdPoductoYCantidad(Long id, Integer cantidad) throws Exception;
+    ItemDto obtenerItemPorIdProductoYCantidad(Long id, Integer cantidad) throws Exception;
 }

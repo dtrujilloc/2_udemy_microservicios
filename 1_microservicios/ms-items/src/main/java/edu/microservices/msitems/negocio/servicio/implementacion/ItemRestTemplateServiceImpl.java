@@ -45,7 +45,7 @@ public class ItemRestTemplateServiceImpl implements IItemService {
     }
 
     @Override
-    public ItemDto obtenerItemPorIdPoductoYCantidad(Long id, Integer cantidad) throws Exception {
+    public ItemDto obtenerItemPorIdProductoYCantidad(Long id, Integer cantidad) throws Exception {
         log.info(">>> Start method obtenerItemPorIdPoductoYCantidad  con RestTemplate -> productId:{}", id);
 
         log.info("---> Start conexion con ms-productos por medio de RestTemplate como cliente http");

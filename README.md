@@ -77,3 +77,23 @@ Por ultimo, falta especificar la ruta del servidor de Eureka, para  que el MS se
 	eureka.client.service-url.defaultZone=http://localhost:8080/eureka
 
 Este tipo de configuraciones permite que cuando un MS se registre en el servidor de Eureka conozca todos los MS que estan registrados, esto con el proposito de que cada uno de los MS's tenga conocimiento de los demas MS's.
+
+Por otro lado tambien hay que aclarar que eureka tiene incorporado el balanceador de carga automaticamente. es decir, no necesita configuracion de balanceador de carga, ya que eureka es encarga de detectar las instancias registradas de cada uno de los MS y de distribuir automaticamente las peticiones entre las instancias disponibles. Para las versiones desde spring boot 2.3.X hacia atras, incluyendola, eureka trabaja con "ribbon" como balanceador de carga. Y desde la 2.4.X en adelante, incluyendola, trabaja con "load balancer" como balanceador de carga.
+
+## 3 Hystrix
+Anteriormente mencionamos que los microservicios son independencientes pero pueden estar comunicados para solventar una necesidad o funcionalidad. Como en nuestro caso, que tenemos dos MS, ms-items y ms-productos, el ms-items llama al ms-productos para obtener la informacion necesaria para poder responder adecuadamente. Pero entonces que pasaria si a la hora de hacer la peticion en el ms-items, la comunicacion entre los dos MS falla? tendriamos un fallo en cascada ya que la respuesta de items depende de lo que responda productos. Pues en el ecosistema de spring cloud existe una herramienta llamada Hystrix, permitiendo agregar la funcionalidad de tolerancia a fallos a nuestra arquitectura de microservicios. Esta tolerancia a fallas se basa en un patron [Circuit Breaker](https://apiumhub.com/es/tech-blog-barcelona/patron-circuit-breaker/). Este patron en pocas palabras evita seguir llamando al MS que esta fallando momentanemente, esperando un tiempo determinado para volver a intentar llamar nuevamente al MS. Lo que se puede hacer mientras que el Ms falla, es configurar un respuesta falsa para asi evitar propagar el error.
+
+Para configurar Hystrix, es necesario agregar la dependencia acorde:
+
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+	</dependency>
+	
+Esta dependencia tiene que agregarse en el proyecto que llama a otros MS's. En nuestro caso en el ms-items, ya que este llama o se comunica con el ms-productos.
+
+Por otro lado, es importante etiquetar el proyecto para habilitar el patron de Circuit Breaker. Esto se hace colocando la etiqueta @EnableCircuitBreaker en la clase principal del proyecto.
+
+Para programar una respuesta falsa sobre el proceso o funcionalidad que falle, es necesario etiquetar el metodo que puede fallar con la etiqueta @HystrixCommand(fallbackMethod = "{nombre_del_metodo_falso}") para indicar que metodo tiene que llamarse cuando el metodo principal falle. Por ejemplo, en nuestro caso, en el ms-items, existe un endpoint que permite consultar un item, los parametros son el idProducto y cantidad. Se busca el producto en el ms-producto por medio del idProducto y se utiliza la informacion de este para construir el objeto de item teniendo en cuenta la cantidad enviada por parametro. Lo que hicimos fue que cuando se enviara un identificador de un producto que no existiera en la BD, el ms-producto respondiera con una excepcion, simulando un error. por medio de hystrix, se programo un flujo falso, para cuando este escenario de error se presentara, lo que se hizo fue programar un metodo que contruyera un objeto de item temporal o momentaneo y que esa fuera la respuesta a la peticion.
+
+Hystrix fue creado inicialmente como herramienta de tolerancia a fallos, por lo que actualmente funciona para la version de spring boot 2.3.X hacia atras. desde la version 2.4.X en adelante se utiliza Resilience4j como herramienta de tolerancia a fallos. Por esta razon no vamos a combinar los cambios de la rama de Hystrix en la rama master.

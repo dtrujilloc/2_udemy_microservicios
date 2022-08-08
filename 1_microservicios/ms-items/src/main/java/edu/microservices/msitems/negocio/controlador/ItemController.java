@@ -58,7 +58,7 @@ public class ItemController {
     @GetMapping("/rest-template/{id}/{cantidad}")
     public ItemDto obtenerItemPorIdPoductoYCantidadRestTemplate(@PathVariable Long id, @PathVariable Integer cantidad) throws Exception {
         log.info(">>> Start endpoint obtenerItemPorIdPoductoYCantidad con RestTemplate");
-        ItemDto itemDto = itemRestTemplateService.obtenerItemPorIdPoductoYCantidad(id, cantidad);
+        ItemDto itemDto = itemRestTemplateService.obtenerItemPorIdProductoYCantidad(id, cantidad);
         log.info(">>> End endpoint obtenerItemPorIdPoductoYCantidad con RestTemplate");
         return itemDto;
     }
@@ -74,7 +74,7 @@ public class ItemController {
     @GetMapping("/feign/{id}/{cantidad}")
     public ItemDto obtenerItemPorIdPoductoYCantidadFeign(@PathVariable Long id, @PathVariable Integer cantidad) throws Exception {
         log.info(">>> Start endpoint obtenerItemPorIdPoductoYCantidad con Feign");
-        ItemDto itemDto = itemFeignService.obtenerItemPorIdPoductoYCantidad(id, cantidad);
+        ItemDto itemDto = itemFeignService.obtenerItemPorIdProductoYCantidad(id, cantidad);
         log.info(">>> End endpoint obtenerItemPorIdPoductoYCantidad con Feign");
         return itemDto;
     }

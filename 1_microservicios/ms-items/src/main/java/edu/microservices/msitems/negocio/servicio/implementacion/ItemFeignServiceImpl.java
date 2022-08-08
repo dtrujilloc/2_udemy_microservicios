@@ -1,5 +1,6 @@
 package edu.microservices.msitems.negocio.servicio.implementacion;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import edu.microservices.msitems.comun.dto.ItemDto;
 import edu.microservices.msitems.comun.dto.ProductoDto;
 import edu.microservices.msitems.configuracion.clienteshttp.ProductoFeignClient;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,8 +60,9 @@ public class ItemFeignServiceImpl implements IItemService {
         return itemDtoList;
     }
 
+    @HystrixCommand(fallbackMethod = "obtenerItemPorIdProductoYCantidadFallback")
     @Override
-    public ItemDto obtenerItemPorIdPoductoYCantidad(Long id, Integer cantidad) throws Exception {
+    public ItemDto obtenerItemPorIdProductoYCantidad(Long id, Integer cantidad) throws Exception {
         log.info(">>> Start method obtenerItemPorIdPoductoYCantidad con Feign -> productId:{}", id);
 
         log.info("---> Start conexion con ms-productos por medio de Feign como cliente http");
@@ -68,6 +71,21 @@ public class ItemFeignServiceImpl implements IItemService {
 
         ItemDto itemDto = new ItemDto(productoDto, cantidad);
         log.info("<<< End method obtenerItemPorIdPoductoYCantidad con Feign -> itemDto:{}", itemDto);
+        return itemDto;
+    }
+
+    public ItemDto obtenerItemPorIdProductoYCantidadFallback(Long id, Integer cantidad) throws Exception {
+        log.info(">>> Start fallback method obtenerItemPorIdProductoYCantidadFallback -> productId:{}", id);
+
+        ProductoDto productoDto = ProductoDto.builder()
+                .id(-1L)
+                .nombre("producto fallback")
+                .precio(0.0)
+                .fechaCreacion(Calendar.getInstance().getTime())
+                .build();
+
+        ItemDto itemDto = new ItemDto(productoDto, cantidad);
+        log.info("<<< End fallback method obtenerItemPorIdProductoYCantidadFallback -> itemDto:{}", itemDto);
         return itemDto;
     }
 }

@@ -16,4 +16,9 @@ public class ProductoDto {
     private String nombre;
     private Double precio;
     private Date fechaCreacion;
+
+    /**
+     * se crea este campo con el proposito de ver graficamente el puerto de la instancia que esta respondiendo.
+     */
+    private Integer puerto;
 }
