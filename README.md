@@ -112,7 +112,7 @@ para hystrix, necesitamos la siguiente propiedad.
 
 Como vemos los tiempos de ribbon suman 14000 ms, por lo cual el tiempo de hyxtrix debe ser mayor a esto.
 
-## Zuul - Api Gateway
+## 4 Zuul - Api Gateway
 Imaginemos que tenemos 5 microservicios, cada uno con su url para poder acceder a los diferentes endpoints que expone. Para poder acceder a estos tendriamos que especificar cada una de las URL's de los diferentes MS en los diferentes puntos que necesitemos acceder, pero supongamos que una vez implementados todos los llamados de los MS, por alguna razon, las URL's de los MS cambiaron, tendriamos que ir punto por punto, modificando las URL's para volver hacer funcionar los llamados a los MS's.  Este trabajo seria demasiado tedioso si llegara a pasar  mas de una vez, o si en vez de tener 5 MS's tuvieramos 100 o mas MS's.
 
 Ahora imaginemos que pudieramos tener una URL base, que por medio de algun identificador supiera redireccionar a la URL correspondiente de cada uno de los MS's, y esta URL base es la que se  utilizaria para hacer los llamados y peticiones, entonces cuando cambien las URL's de los MS's solo tendriamos que ir a modificarlo en el redireccionamiento de la URL base. Pues esto es lo que permite hacer Zuul, configurar una puerta de enlace para que funcione por medio de una API y redireccionar cada uno de los MS's que tengamos.
